@@ -137,6 +137,15 @@ def gen_credentials_cache(keytab, principal):
     subprocess.check_call(['kinit', '-k', '-t', keytab, '-c', cachefile[1], principal])
     return cachefile
 
+def remove_credentials_cache(cachefile):
+    """
+    Remove a Kerberos credentials cache file using after use.
+    """
+    cmd = subprocess.Popen(['rm', '-rf', cachefile])
+    if cmd.wait() != 0:
+        raise Exception("Failed to remove cache file")
+    else:
+        print("Removed cache file")
 
 def check_luks_device(device):
     """
@@ -211,6 +220,10 @@ def main():
     ldif = ldap.modlist.addModlist(attrs)
     con.add_s(recovery_dn, ldif)
     print("Recovery key saved to AD.")
+
+    # Remove cachefile
+    print("Remove Kerberos credential cache {}".format(cachefile[1]))
+    remove_credentials_cache(cachefile[1])
 
     if args.remove_original_key:
         print("Removing original unlock key...")
