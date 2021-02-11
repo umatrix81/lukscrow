@@ -139,7 +139,7 @@ def gen_credentials_cache(keytab, principal):
 
 def remove_credentials_cache(cachefile):
     """
-    Remove a Kerberos credentials cache file using after use.
+    Remove a Kerberos credentials cache file after use.
     """
     cmd = subprocess.Popen(['rm', '-rf', cachefile])
     if cmd.wait() != 0:
