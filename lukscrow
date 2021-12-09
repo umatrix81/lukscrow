@@ -113,7 +113,12 @@ def generate_recovery_info(computer_dn,device):
     recovery_timestamp = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S')
     recovery_guid = uuid.uuid4()
     recovery_key = generate_recovery_key()
-    recovery_uuid = get_uuid(device)
+    recovery_uuid = uuid.UUID(get_uuid(device))
+    
+    # debug print
+    print("msFVE-RecoveryGuid '{}'".format(str(recovery_guid)))
+    print("msFVE-VolumeGuid '{}'".format(str(recovery_uuid)))
+
 
     # Generate the CN and full DN for the recovery info object
     # Sorry about this - needs to look like '2018-10-11T12:14:15-00:00{some-guid-stuff-here}' hence the extra escaped braces
@@ -123,9 +128,9 @@ def generate_recovery_info(computer_dn,device):
     return (recovery_dn, {
         'objectclass': bytes('msFVE-RecoveryInformation', encoding='ascii'),
         'cn': bytes(recovery_cn, encoding='ascii'),
-        'msFVE-RecoveryGuid': bytes(str(recovery_guid), encoding='ascii'),
+        'msFVE-RecoveryGuid': recovery_guid.bytes_le,
         'msFVE-RecoveryPassword': bytes(recovery_key, encoding='ascii'),
-        'msFVE-VolumeGuid': bytes(recovery_uuid, encoding='ascii'),
+        'msFVE-VolumeGuid': recovery_uuid.bytes_le,
     })
 
 
@@ -243,8 +248,6 @@ def main():
     # Now generate a recovery key, GUID, and associated stuff
     print("Generating recovery info...")
     recovery_dn, attrs = generate_recovery_info(computer_dn,args.luks_device)
-    print("msFVE-RecoveryGuid '{}'".format(attrs['msFVE-RecoveryGuid'].decode('utf-8')))
-    print("msFVE-VolumeGuid '{}'".format(attrs['msFVE-VolumeGuid'].decode('utf-8')))
 
     # Adding recovery key to LUKS volume
     print("Adding recovery key to LUKS volume...")
