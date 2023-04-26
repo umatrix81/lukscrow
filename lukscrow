@@ -224,7 +224,7 @@ def main():
     # Get the hostname, uppercase it and add a $ to the end - this is the
     # required format for the host's kerberos principal e.g. MYHOSTNAME$
     print("Getting principal...")
-    hostname = "host/crypttest.ald.home.lan"
+    hostname = "crypttest.ald.home.lan"
     principal = hostname
     print("Using principal '{}'".format(principal))
 
