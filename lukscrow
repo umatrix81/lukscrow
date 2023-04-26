@@ -78,7 +78,7 @@ def lookup_computer(con, computers_base_dn, hostname):
     Looks up a computer account in AD and returns the full DN.
     """
 
-    results = con.search_s(computers_base_dn, ldap.SCOPE_SUBTREE, '(&(objectclass=computer)(cn={}))'.format(hostname.upper()), ['cn'])
+    results = con.search_s(computers_base_dn, ldap.SCOPE_SUBTREE, '(&(objectclass=computer)(cn={}))'.format(hostname), ['cn'])
     return results[0][0]
 
 
